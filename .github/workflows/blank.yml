@@ -22,6 +22,10 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+      - name: Delete stopped docker container
+        run: docker system prune -f
+      - name: Build the Docker image  for Booking Portal
+        run: docker build --no-cache -t booking-portal-api:latest .
 
       - name: Build, tag, and push docker image to Amazon ECR
         env:
