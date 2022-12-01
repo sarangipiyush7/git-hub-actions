@@ -22,20 +22,13 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-      - name: Delete stopped docker container
-        run: docker system prune -f
-      - name: Build the Docker image  for Booking Portal
-        run: docker build --no-cache -t booking-portal-api:latest .
 
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: test123
           IMAGE_TAG: ${{ github.sha }}
-        run: aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 725652414192.dkr.ecr.us-east-1.amazonaws.com/test123 
-      - name: change the Docker image name
-        run: docker tag booking-portal-api:latest 725652414192.dkr.ecr.us-east-1.amazonaws.com/test123/tripscout-booking-api:latest
-      - name: Push the image to ECR
-        run: docker push 725652414192.dkr.ecr.us-east-1.amazonaws.com/test123/tripscout-booking-api:latest    
-        
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           
