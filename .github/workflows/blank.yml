@@ -28,5 +28,10 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: test123
           IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+        run: aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 725652414192.dkr.ecr.us-east-1.amazonaws.com/test123 
+      - name: change the Docker image name
+        run: docker tag booking-portal-api:latest 725652414192.dkr.ecr.us-east-1.amazonaws.com/test123/tripscout-booking-api:latest
+      - name: Push the image to ECR
+        run: docker push 725652414192.dkr.ecr.us-east-1.amazonaws.com/test123/tripscout-booking-api:latest    
+        
+          
